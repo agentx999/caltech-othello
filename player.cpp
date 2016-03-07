@@ -14,12 +14,19 @@ Player::Player(Side side) {
      * precalculating things, etc.) However, remember that you will only have
      * 30 seconds.
      */
+
+     // Stores the current side
+     this->side = side;
+     // Creates a board (this is what the AI tracks)
+     this->board = new Board();
 }
 
 /*
  * Destructor for the player.
  */
 Player::~Player() {
+    delete side;
+    delete board;
 }
 
 /*
@@ -38,6 +45,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     /* 
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
-     */ 
+     */
+     
     return NULL;
 }
