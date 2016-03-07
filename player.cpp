@@ -46,6 +46,15 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-     
+    // Checks to see if there are legal moves
+    if (board->hasMoves(*side)) 
+    {
+        // Very basic first outline:
+        // Go through all possible legal moves
+        // Store them (in a vector?)
+        // Pick one at random
+        // Make the random move
+    }
+    // No legal moves - passes
     return NULL;
 }
