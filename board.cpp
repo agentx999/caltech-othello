@@ -10,6 +10,31 @@ Board::Board() {
     taken.set(4 + 8 * 4);
     black.set(4 + 8 * 3);
     black.set(3 + 8 * 4);
+
+    // Initialize the scores matrix
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            scores[i][j] = 1;
+            if (i == 0 || i == 7 || j == 0 || j == 7)
+                scores[i][j] = 2;
+            if ((i == 0 || i == 7) && (j == 0 || j == 7))
+                scores[i][j] = 3;
+            if ((i == 1 || i == 6) && (j == 1 || j == 6))
+                scores[i][j] = -3;      
+        }
+    }
+    // For later: figure out smart way of coding these
+    scores[1][0] = -2;
+    scores[0][1] = -2;
+    scores[6][0] = -2;
+    scores[0][6] = -2;
+    scores[7][1] = -2;
+    scores[1][7] = -2;
+    scores[7][6] = -2;
+    scores[6][7] = -2;
+    
 }
 
 /*

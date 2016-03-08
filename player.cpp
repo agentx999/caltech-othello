@@ -22,8 +22,9 @@ Player::Player(Side side) {
      // Creates a board (this is what the AI tracks)
      this->board = new Board();
 
+     // ----CODE FOR RANDOM AI----
      // Initialize random seed (this is a test!)
-     srand(time(NULL));
+     // srand(time(NULL));
 }
 
 /*
@@ -53,7 +54,8 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     // Update board with opponent's move:
     Side opponentsSide = (side == BLACK) ? WHITE : BLACK;
     board->doMove(opponentsMove, opponentsSide); 
-    std::vector<Move*> possible_moves;
+    std::vector<Move*> moves;
+    std::vector<int> scores;
     // Checks to see if there are legal moves
     if (board->hasMoves(side)) 
     {
@@ -67,20 +69,37 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
                 Move *currentMove = new Move(i, j);
                 if (board->checkMove(currentMove, side))
                 {
+                    // Calculate this move's score (based on location)
+                    int score = board->scores[i][j];
                     // Store them (in a vector?)
-                    possible_moves.push_back(currentMove);
+                    moves.push_back(currentMove);
+                    scores.push_back(score);
+                    // pushing back by same amount, so indices should be same?
                 }
             }
         }
-        // Okay, we have a list of legal moves.
-        // We need to use a heuristic to pick the best one.
+
+        // Go through the possible scores and find maximum
+        // Find a better way to do this?
+        int max_index = 0;
+        int max = scores[0];
+        for (unsigned int i = 0; i < scores.size(); i++)
+        {
+           if (scores[i] > max)
+           {
+              max = scores[i];
+              max_index = i;
+           }
+        }
+        Move *chosenMove = moves[max_index];
         
-
-
+        
+        // ----CODE FOR RANDOM AI---
         // Pick one at random
-        // Return the random move
-        int randMove = rand() % possible_moves.size();
-        Move *chosenMove = possible_moves[randMove];
+        // int randMove = rand() % possible_moves.size();
+        // Move *chosenMove = possible_moves[randMove];
+
+        // Update board with chosen move and return
         board->doMove(chosenMove, side);
         return chosenMove;
     }
