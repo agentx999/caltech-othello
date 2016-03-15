@@ -52,23 +52,27 @@ tried calculating my pieces-board weighted average in different ways.
 None of these managed to beat BetterPlayer, and I actually started losing 
 against ConstantTimePlayer as well after a while. 
 
-(I think at this point, it was more a matter of pride. I was so frustrated
-with how BetterPlayer kept on winning, I wanted to beat it in a less 
-complicated way just to prove that I was smarter than it. Sounds ridiculous,
-but that's how it was.)
-
 After A LOT of failed heuristics, I decided to try something completely new,
 and implemented the minimizing-frontiers idea that was discussed in the 
-second Othello recitation. I then found something interesting: if I took
-out my number of pieces heuristic and substituted the frontiers one instead,
-I would consistently lose to BetterPlayer as black, but consistently win
-as white. If I changed the weighted average, I would consistently win
-as black, but consistently lose as white. This implies that as a black player,
-it is in one's best interests to make sure one is minimizing one's frontier
-score, and that minimizing the frontier is not as important in an optimal
-strategy as white as it is as black. This makes sense, because if black
-goes first, more of black's pieces would naturally be frontier pieces, so black
-would want to take special care to make sure they don't overextend themselves.
+second Othello recitation. I needed to modify board.h to do this, and made
+some of the private methods public in order to make my life a little easier
+when I was calculating the number of adjacent occupied squares.
+
+I then found something interesting: if I took out my number of pieces heuristic 
+and substituted the frontiers one instead, I would consistently lose to 
+BetterPlayer as black, but consistently win as white. If I changed the weighted 
+average, I would consistently win as black, but consistently lose as white. 
+This implies that as a black player, it is in one's best interests to make sure 
+one is minimizing one's frontier score, and that minimizing the frontier is not 
+as important in an optimal strategy as white as it is as black. This makes 
+sense, because if black goes first, more of black's pieces would naturally be 
+frontier pieces, so black would want to take special care to make sure they 
+don't overextend themselves.
+
+My final heuristic takes 0.7 * the board weights + 0.3 * the frontier score if
+the player is white, and 0.6 * the board weights + 0.4 * the frontier score if
+the player is black. It beats ConstantTimePlayer 19/20 times, and BetterPlayer
+10/10 times - and it does not use minimax.
 
 I think this strategy works partly due to the combination: my player tries
 to play in an optimal location, but also tries to minimize the frontier. In

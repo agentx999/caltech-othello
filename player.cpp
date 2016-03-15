@@ -13,21 +13,12 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
-    
-    /* 
-     * TODO: Do any initialization you need to do here (setting up the board,
-     * precalculating things, etc.) However, remember that you will only have
-     * 30 seconds.
-     */
 
-     // Stores the current side
-     this->side = side;
-     // Creates a board (this is what the AI tracks)
-     this->board = new Board();
+    // Stores the current side
+    this->side = side;
+    // Creates a board (this is what the AI tracks)
+    this->board = new Board();
 
-     // ----CODE FOR RANDOM AI----
-     // Initialize random seed (this is a test!)
-     // srand(time(NULL));
 }
 
 /*
@@ -50,16 +41,12 @@ Player::~Player() {
  * return NULL.
  */
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
-    /* 
-     * TODO: Implement how moves your AI should play here. You should first
-     * process the opponent's opponents move before calculating your own move
-     */
+
     // Update board with opponent's move:
     Side opponentsSide = (side == BLACK) ? WHITE : BLACK;
     board->doMove(opponentsMove, opponentsSide); 
     std::vector<Move*> moves;
     std::vector<double> scores;
-    //std::vector<int> frontier;
     // Checks to see if there are legal moves
     if (board->hasMoves(side)) 
     {
@@ -104,7 +91,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             }
         }
         int max_index = 0;
-        if (testingMinimax)
+        if (testingMinimax) // (minimax test)
         {
             // Minimax all possible moves, pick move with highest score
             double max_score = -DBL_MAX;
@@ -121,7 +108,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
                 delete m_board;
             }
         }
-        else
+        else // (competitive)
         { 
             // Go through the possible scores and find maximum
             int max = scores[0];
@@ -135,12 +122,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             }
         }
         Move *chosenMove = moves[max_index];
-        
-        
-        // ----CODE FOR RANDOM AI---
-        // Pick one at random
-        // int randMove = rand() % possible_moves.size();
-        // Move *chosenMove = possible_moves[randMove];
 
         // Update board with chosen move and return
         board->doMove(chosenMove, side);
