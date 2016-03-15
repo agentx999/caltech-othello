@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <climits>
 #include <algorithm>
+#include <float.h>
 
 /*
  * Constructor for the player; initialize everything here. The side your AI is
@@ -57,7 +58,8 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     Side opponentsSide = (side == BLACK) ? WHITE : BLACK;
     board->doMove(opponentsMove, opponentsSide); 
     std::vector<Move*> moves;
-    std::vector<int> scores;
+    std::vector<double> scores;
+    //std::vector<int> frontier;
     // Checks to see if there are legal moves
     if (board->hasMoves(side)) 
     {
@@ -71,11 +73,33 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
                 if (board->checkMove(currentMove, side))
                 {
                     // Calculate this move's score (based on location)
+                    Board *newBoard = board->copy();
+                    newBoard->doMove(currentMove, side);
                     int score = board->scores[i][j];
-                    // Store them (in a vector?)
+                    // Calculate this move's frontier score
+                    int front_score = 0;
+                    for (int a = i - 1; a < i + 2; a++)
+                    {
+                        for (int b = j - 1; b < j + 2; b++)
+                        {
+                            if (board->onBoard(a, b) && a != b)
+                            {
+                                if (board->occupied(a, b))
+                                    front_score++;
+                            }
+                        }
+                    }
+                    // Calculates a weighted average of the two
+                    // (differs depending on color of player)
+                    double new_score;
+                    if (side == WHITE)
+                        new_score = front_score * 0.3 + score * 0.7;
+                    else
+                        new_score = front_score * 0.4 + score * 0.6;
+                    // Stores both the move and the weighted score
                     moves.push_back(currentMove);
-                    scores.push_back(score);
-                    // pushing back by same amount, so indices should be same?
+                    scores.push_back(new_score);
+                    delete newBoard;
                 }
             }
         }
@@ -83,16 +107,18 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         if (testingMinimax)
         {
             // Minimax all possible moves, pick move with highest score
-            int max_score = INT_MIN;
-            Board *m_board = board->copy();
+            double max_score = -DBL_MAX;
             for(unsigned int i = 0; i < moves.size(); i++)
             {
-                int curr_score = minimax(moves[i], m_board, 2, true);
+                Board *m_board = board->copy();
+                m_board->doMove(moves[i], side);
+                double curr_score = minimax(moves[i], m_board, 2, true);
                 if (curr_score > max_score)
                 {
                     max_score = curr_score;
                     max_index = i;
                 }
+                delete m_board;
             }
         }
         else
@@ -136,16 +162,17 @@ int Player::minimax(Move* move, Board* current, int depth, bool maximizingPlayer
     if(maximizingPlayer)
     {
         curr_side = side;
-        other_side = (side == BLACK) ? WHITE : BLACK;
+        other_side = (curr_side == BLACK) ? WHITE : BLACK;
     }
     else
     {
         other_side = side;
-        curr_side = (side == BLACK) ? WHITE : BLACK;
+        curr_side = (other_side == BLACK) ? WHITE : BLACK;
     }
     // Base case: at depth limit or at terminal node
     if (depth == 0 || !current->hasMoves(curr_side))
     {
+        // Replace this with a better heuristic
         return board->count(curr_side) - board->count(other_side);
     }
     if (maximizingPlayer) // We are playing
@@ -157,11 +184,12 @@ int Player::minimax(Move* move, Board* current, int depth, bool maximizingPlayer
             {
                 // Check for legality
                 Move *currentMove = new Move(i, j);
-                if (board->checkMove(currentMove, side))
+                if (board->checkMove(currentMove, curr_side))
                 {
                     // Store legal moves
                     moves.push_back(currentMove);
                 }
+                delete currentMove;
             }
         }
         // Found all legal possible moves...now minimax them
@@ -186,11 +214,12 @@ int Player::minimax(Move* move, Board* current, int depth, bool maximizingPlayer
             {
                 // Check for legality
                 Move *currentMove = new Move(i, j);
-                if (board->checkMove(currentMove, side))
+                if (board->checkMove(currentMove, curr_side))
                 {
                     // Store legal moves
                     moves.push_back(currentMove);
                 }
+                delete currentMove;
             }
         }
         // Found all legal possible moves...now minimax them
@@ -209,3 +238,4 @@ int Player::minimax(Move* move, Board* current, int depth, bool maximizingPlayer
     }
 
 }
+

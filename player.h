@@ -14,6 +14,7 @@ public:
     
     Move *doMove(Move *opponentsMove, int msLeft);
     int minimax(Move *move, Board *current, int depth, bool player);
+    double minimax2(Move *move, Board *current, int depth, int score, int ply);
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
     Side side;
